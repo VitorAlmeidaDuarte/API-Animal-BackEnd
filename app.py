@@ -2,7 +2,7 @@ from Models.Animals import *
 from Models.Images import filter_animal_image, insert_image
 from Models.User import *
 from config import app_config, app_active
-from flask import Flask, Response, request, send_file
+from flask import Flask, Response, request
 from flask_sqlalchemy import SQLAlchemy
 
 config = app_config[app_active]
@@ -54,9 +54,9 @@ def create_app(condig_name):
 
     @app.route("/Animal/mostrar-informações/<nomeAnimal>", methods=["GET"])
     def show_information_animals(nomeAnimal):
-        animal_or_eception = show_animals(nomeAnimal.capitalize())
+        animal_or_ecxeption = show_animals(nomeAnimal.capitalize())
 
-        return animal_or_eception
+        return animal_or_ecxeption
 
     @app.route('/Animal/adicionar-foto', methods=['POST'])
     def adicionar_foto():

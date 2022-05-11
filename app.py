@@ -1,7 +1,8 @@
 from Models.Animals import *
+from Models.Images import filter_animal_image, insert_image
 from Models.User import *
 from config import app_config, app_active
-from flask import Flask, jsonify, request
+from flask import Flask, Response, request, send_file
 from flask_sqlalchemy import SQLAlchemy
 
 config = app_config[app_active]
@@ -28,6 +29,7 @@ def create_app(condig_name):
 
         else:
             return {"Error": "usuario já existente"}
+
 
     @app.route("/Cadastro/animal", methods=["POST"])
     def register_animal():
@@ -56,17 +58,25 @@ def create_app(condig_name):
 
         return animal
 
-    @app.route("/Animal/imagem/<nomeAnimal>", methods=["GET"])  # TODO.error
+    @app.route('/Animal/adicionar-foto', methods=['POST'])
+    def adicionar_foto():
+        file = request.files['imagem']
+        body = request.form
+
+        if verify_user(body['nome'], body['password']):
+            minetype = file.mimetype
+            insert_image(file, body['nomeAnimal'], minetype)
+            return {'Sucesso': 'foto do animal adicionado!!'}
+
+        else:
+            return {'ERROR': 'voce não tem permissão para isso'}
+
+
+    @app.route("/Animal/imagem/<nomeAnimal>", methods=["GET"])  
     def show_animal_picture(nomeAnimal):
-        image_directory = (
-            f"C:/Users/User/Desktop/Project-Animal/images/{nomeAnimal}.jpg"
-        )
-
-        try:
-            return send_file(image_directory)
-
-        except:
-            return {"ERROR": "Animal não econtrado"}
+        animal = filter_animal_image(nomeAnimal)
+        
+        return Response(animal.img, mimetype=animal.mimetype)
 
     @app.route("/Animal/modificar", methods=["PUT"])
     def edit_animal():

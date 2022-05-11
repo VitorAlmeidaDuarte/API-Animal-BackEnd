@@ -54,9 +54,9 @@ def create_app(condig_name):
 
     @app.route("/Animal/mostrar-informações/<nomeAnimal>", methods=["GET"])
     def show_information_animals(nomeAnimal):
-        animal = show_animals(nomeAnimal)
+        animal_or_eception = show_animals(nomeAnimal.capitalize())
 
-        return animal
+        return animal_or_eception
 
     @app.route('/Animal/adicionar-foto', methods=['POST'])
     def adicionar_foto():
@@ -74,10 +74,13 @@ def create_app(condig_name):
 
     @app.route("/Animal/imagem/<nomeAnimal>", methods=["GET"])  
     def show_animal_picture(nomeAnimal):
-        animal = filter_animal_image(nomeAnimal)
+        animal_or_eception = filter_animal_image(nomeAnimal.capitalize())
         
-        return Response(animal.img, mimetype=animal.mimetype)
-
+        try:
+            return Response(animal_or_eception.img, mimetype=animal_or_eception.mimetype)
+        except:
+            return {'ERROR': 'Aninaml não encontrado'}
+        
     @app.route("/Animal/modificar", methods=["PUT"])
     def edit_animal():
         body = request.get_json()

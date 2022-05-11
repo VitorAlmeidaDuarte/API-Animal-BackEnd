@@ -13,6 +13,7 @@ class Users(db.Model):
     admin = db.Column(db.Boolean, default=0)
 
 
+#TODO.lembrar de orgarnizar os return e a passwordhash
 def verify_user(nome, senha):
     user = Users.query.filter_by(nome=nome).first()
 

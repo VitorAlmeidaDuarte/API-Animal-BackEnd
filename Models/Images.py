@@ -21,13 +21,9 @@ def insert_image(pic, name, mimetype):
     db.session.add(img)
     db.session.commit()
 
-def filter_animal_image(nome):
+def filter_animal_image(nome):    
+    image_animal = Imagem.query.filter_by(name=nome).first()
+    return image_animal
 
-    try:
-        image_animal = Imagem.query.filter_by(name=nome).first()
-        return image_animal
-
-    except:
-        response_error = {'ERROR': 'animal não encontado'}
-        return response_error
+    
         

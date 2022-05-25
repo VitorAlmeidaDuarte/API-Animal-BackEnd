@@ -1,3 +1,4 @@
+from ssl import HAS_SNI
 from flask_sqlalchemy import SQLAlchemy
 from config import app_config, app_active
 from passlib.hash import pbkdf2_sha512
@@ -8,18 +9,20 @@ config = app_config[app_active]
 db = SQLAlchemy(config.APP)
 
 
-def create_hash(password):
-    pass_hash = pbkdf2_sha512.hash(password.encode("utf-8"))
 
-    return pass_hash
+class HashPassword():
+    def create_hash(password):
+        pass_hash = pbkdf2_sha512.hash(password.encode("utf-8"))
+
+        return pass_hash
 
 
-def verify_hash(password, hash_password):
-    if pbkdf2_sha512.verify(password, hash_password):
-        return True
+    def verify_hash(password, hash_password):
+        if pbkdf2_sha512.verify(password, hash_password):
+            return True
 
-    else:
-        return False
+        else:
+            return False
     
 
 class Users(db.Model):
@@ -30,31 +33,32 @@ class Users(db.Model):
 
 
 
-def verify_user(nome, senha):
-    user = Users.query.filter_by(nome=nome).first()
+class UsersManage():
+    def verify_user(nome, senha):
+        user = Users.query.filter_by(nome=nome).first()
 
-    
-    senha_vereficada = verify_hash(senha, user.hash)
-
-    if senha_vereficada:
-        return True
-    else:
-        return False
-
-def insert_user_banco(nome_recebido, senha_recebida):
-
-    if Users.query.filter_by(nome=nome_recebido).all():
-        return False
-
-    else:
         
+        senha_vereficada = HashPassword.verify_hash(senha, user.hash)
 
-        senha_convertida_in_hash = create_hash(senha_recebida)
-        usuario = Users(
-                nome=nome_recebido,
-                hash=senha_convertida_in_hash.encode('utf-8'),
-            )
+        if senha_vereficada:
+            return True
+        else:
+            return False
 
-        db.session.add(usuario)
-        db.session.commit()
-        return True
+    def insert_user_banco(nome_recebido, senha_recebida):
+
+        if Users.query.filter_by(nome=nome_recebido).all():
+            return False
+
+        else:
+            
+
+            senha_convertida_in_hash = HashPassword.create_hash(senha_recebida)
+            usuario = Users(
+                    nome=nome_recebido,
+                    hash=senha_convertida_in_hash.encode('utf-8'),
+                )
+
+            db.session.add(usuario)
+            db.session.commit()
+            return True

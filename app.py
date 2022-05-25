@@ -1,6 +1,6 @@
-from Models.Animals import *
+from Models.Animals import AnimalsManage
 from Models.Images import filter_animal_image, insert_image
-from Models.User import *
+from Models.User import UsersManage
 from config import app_config, app_active
 from flask import Flask, Response, request
 from flask_sqlalchemy import SQLAlchemy
@@ -24,7 +24,7 @@ def create_app(condig_name):
     def register_user():
         body = request.get_json()
 
-        if insert_user_banco(body["nome"], body["password"]):
+        if UsersManage.insert_user_banco(body["nome"], body["password"]):
             return {"Sucesso": "usuario cadastrado"}
 
         else:
@@ -35,10 +35,10 @@ def create_app(condig_name):
     def register_animal():
         body = request.get_json()
 
-        user_verify = verify_user(body["nome"], body["password"])
+        user_verify = UsersManage.verify_user(body["nome"], body["password"])
 
         if user_verify == True:
-            insert_animal_banco(
+            AnimalsManage.insert_animal_banco(
                 body["nomeAnimal"],
                 body["qtnEspecies"],
                 body["comportamento"],
@@ -54,7 +54,7 @@ def create_app(condig_name):
 
     @app.route("/Animal/mostrar-informações/<nomeAnimal>", methods=["GET"])
     def show_information_animals(nomeAnimal):
-        animal_or_ecxeption = show_animals(nomeAnimal.capitalize())
+        animal_or_ecxeption = AnimalsManage.show_animals(nomeAnimal.capitalize())
 
         return animal_or_ecxeption
 
@@ -63,7 +63,7 @@ def create_app(condig_name):
         file = request.files['imagem']
         body = request.form
 
-        if verify_user(body['nome'], body['password']):
+        if UsersManage.verify_user(body['nome'], body['password']):
             minetype = file.mimetype
             insert_image(file, body['nomeAnimal'], minetype)
             return {'Sucesso': 'foto do animal adicionado!!'}
@@ -85,10 +85,10 @@ def create_app(condig_name):
     def edit_animal():
         body = request.get_json()
 
-        user_verify = verify_user(body["nome"], body["password"])
+        user_verify = UsersManage.verify_user(body["nome"], body["password"])
 
         if user_verify == True:
-            modify_animal_origin(
+            AnimalsManage.modify_animal_origin(
                 nomeAnimal_modify=body["nomeAnimalModificate"],
                 new_qtn_especies=body["newQtnEspecies"],
                 new_alimentacao=body["newAlimentacao"],
@@ -103,10 +103,10 @@ def create_app(condig_name):
     def delete_animal():
         body = request.get_json()
 
-        user_verify = verify_user(body["nome"], body["password"])
+        user_verify = UsersManage.verify_user(body["nome"], body["password"])
 
         if user_verify:
-            delete_animal_origin(body["nomeAnimalDelete"])
+            AnimalsManage.delete_animal_origin(body["nomeAnimalDelete"])
 
             return {"Sucesso": "Animal deletado"}
 

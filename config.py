@@ -14,6 +14,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = (
         "sqlite:///C:/Users/User/Desktop/Project-Animal/bancoDados/Animals-User.db"
     )
+    
 
 
 class DevelopmentConfig(Config):

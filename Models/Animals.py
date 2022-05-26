@@ -12,6 +12,7 @@ class Animals(db.Model):
     qtn_especies = db.Column(db.Integer)
     comportamento = db.Column(db.String(14))
     alimentacao = db.Column(db.String(16))
+    
 
 
 class AnimalsManage():
